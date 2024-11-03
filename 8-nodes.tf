@@ -32,6 +32,10 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   role = aws_iam_role.nodes.name
 }
 
+resource "aws_iam_role_policy_attachment" "amazon_ec2_cloudwatch_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  role = aws_iam_role.nodes.name
+}
 
 resource "aws_eks_node_group" "general" {
   cluster_name    = aws_eks_cluster.eks.name
@@ -45,10 +49,10 @@ resource "aws_eks_node_group" "general" {
   ]
   
   capacity_type = "ON_DEMAND"
-  instance_types = ["t3.large"]
+  instance_types = ["t3.medium"]
 
   scaling_config {
-    desired_size = 1
+    desired_size = 2
     max_size     = 5 
     min_size     = 0
   }
@@ -66,6 +70,7 @@ resource "aws_eks_node_group" "general" {
     aws_iam_role_policy_attachment.amazon_eks_worker_node_policy,
     aws_iam_role_policy_attachment.amazon_eks_cni_policy,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
+    aws_iam_role_policy_attachment.amazon_ec2_cloudwatch_policy
   ]
   
   
